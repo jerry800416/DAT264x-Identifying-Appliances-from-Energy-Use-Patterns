@@ -1,4 +1,4 @@
-<h1>使用KerasCNN實做MICORSOFT:DAT264x競賽</h1><br>
+<h1>使用KerasCNN實做MICROSOFT:DAT264x競賽</h1><br>
 <br>
 <br>
 競賽網站:https://www.datasciencecapstone.org/competitions/10/appliances-energy-use/submissions/
