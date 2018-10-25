@@ -26,6 +26,7 @@ with open('./data-release/train_labels.csv') as csvfile:
         try:
             files = '{}/{}'.format(router,row[0]) #檔案名稱路徑
             files2  = classifire + '{}'.format(row[1]) #分類資料夾路徑
+            
             #去掉csv檔的標頭
             if row[0] == 'id':
                 continue
