@@ -3,7 +3,8 @@ import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split #隨機切分資料用
 from tensorflow import keras
-
+from keras import regularizers
+from keras.callbacks import ModelCheckpoint
 
 
 # 讀取array檔
@@ -31,7 +32,7 @@ x_test = x_test / 255
 NUM_CLASSES = 11  #總共11個分類
 y_train = keras.utils.to_categorical(y_train, NUM_CLASSES)
 y_test = keras.utils.to_categorical(y_test, NUM_CLASSES)
-
+# print(x_train.shape[1:])
 
 """### 建立模型"""
 model = keras.Sequential()
@@ -63,17 +64,26 @@ model.add(keras.layers.Dense(330, activation=tf.nn.relu))  #普通的全連接�
 model.add(keras.layers.Dropout(0.25))
 model.add(keras.layers.Dense(110, activation=tf.nn.relu))  #普通的全連接層
 model.add(keras.layers.Dropout(0.25))
-model.add(keras.layers.Dense(44, activation=tf.nn.relu))
+model.add(keras.layers.Dense(44, activation=tf.nn.relu))  #普通的全連接層
 model.add(keras.layers.Dense(NUM_CLASSES, activation=tf.nn.softmax))
 model.summary()
+
 
 # compile模型
 model.compile(optimizer=keras.optimizers.Adam(),
               loss='categorical_crossentropy',             # loss函數選擇adam
               metrics=['accuracy'])
 
+#設立檢查點
+filepath='weights.best.hdf5'
+
+# 有一次提升,則將該次權重儲存
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True,mode='max')
+callbacks_list = [checkpoint]
+
 # 執行訓練
-history = model.fit(x_train, y_train, validation_data = (x_test, y_test),epochs=100)
+history = model.fit(x_train, y_train, callbacks=callbacks_list, validation_data = (x_test, y_test),epochs=1000)
+
 
 ### 保存模型
-model.save('DAT264-x_CNN.h5')   #該檔案保存模型結構、模型權重
+# model.save('DAT264-x_CNN.h5')   #該檔案保存模型結構、模型權重

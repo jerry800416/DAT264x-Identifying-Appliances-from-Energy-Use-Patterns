@@ -3,13 +3,55 @@ import tensorflow as tf
 import numpy as np
 from tensorflow import keras
 from keras.preprocessing.image import ImageDataGenerator     #導入kearas圖像預處理模組
+from sklearn.model_selection import train_test_split #隨機切分資料用
 from PIL import Image 
 import os 
 import csv
 
-# list1 = []
-# 讀取訓練好的model
-model = tf.keras.models.load_model('DAT264-x_CNN.h5')
+
+"""### 建立模型"""
+model = keras.Sequential()
+
+model.add(keras.layers.Conv2D(32, activation=tf.nn.relu, kernel_size=(3, 3), input_shape=(256,118,3)))  #新增卷積層
+model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))   #最大池化
+model.add(keras.layers.Dropout(0.25))                 #防止過擬合
+
+model.add(keras.layers.Conv2D(64, activation=tf.nn.relu,kernel_size=(3, 3)))
+model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
+model.add(keras.layers.Dropout(0.25))
+
+model.add(keras.layers.Conv2D(128, activation=tf.nn.relu,kernel_size=(3, 3)))
+model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
+model.add(keras.layers.Dropout(0.25))
+
+model.add(keras.layers.Conv2D(256, activation=tf.nn.relu,kernel_size=(3, 3)))
+model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
+model.add(keras.layers.Dropout(0.25))
+
+model.add(keras.layers.Conv2D(512, activation=tf.nn.relu,kernel_size=(3, 3)))
+model.add(keras.layers.MaxPool2D(pool_size=(2, 2)))
+model.add(keras.layers.Dropout(0.25))
+
+model.add(keras.layers.Flatten())
+model.add(keras.layers.Dense(550, activation=tf.nn.relu))  #普通的全連接層
+model.add(keras.layers.Dropout(0.25))
+model.add(keras.layers.Dense(330, activation=tf.nn.relu))  #普通的全連接層
+model.add(keras.layers.Dropout(0.25))
+model.add(keras.layers.Dense(110, activation=tf.nn.relu))  #普通的全連接層
+model.add(keras.layers.Dropout(0.25))
+model.add(keras.layers.Dense(44, activation=tf.nn.relu))  #普通的全連接層
+model.add(keras.layers.Dense(11, activation=tf.nn.softmax))
+model.summary()
+
+# load weights 載入模型權重
+model.load_weights('weights.best.hdf5')
+
+# compile模型
+model.compile(optimizer=keras.optimizers.Adam(),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+print('載入模型和權重')
+
 
 router = './data-release/testdata' #資料目錄
 
